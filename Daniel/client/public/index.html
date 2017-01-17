@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+	<script src="lib/jquery-3.1.1.min.js"></script>
+	<script src="lib/moment.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>首页</title>
+</head>
+<body>
+	<div style="margin-left:50px">
+		<h1>Blog</h1> 
+		<textarea name="post" id="post" cols="50" rows="10" placeholder="说点什么！！"></textarea>
+		<p></p>
+		<button type="button" class="btn btn-primary" onclick="addPost()">提交</button>
+		<ul id="blogs"></ul>
+	</div>
+	<script>
+		$(function() {
+			loadPost()
+			
+		})
+
+		function loadPost() {
+			$.get("http://localhost:5000/blogs", function(data) {
+				var html = ""
+				for(var item of data){
+					var localTime = moment(item.postTime).format("YYYY-MM-DD HH:mm")
+					html += `<li>${item.post} ${localTime }</li>`
+				}
+				$("#blogs").html(html)
+			})
+		}
+
+		function addPost(){
+			var post = $("#post").val()
+			if(post.length ==- 0) {
+				alert("请输入内容!")
+				return
+			}	
+			//console.log(post)
+			var params = { post: post }
+			$.post("http://localhost:5000/blog", params, function(data) {
+				loadPost()
+				$("#post").val("")
+			})
+		}
+
+	</script>
+</body>
+</html>
